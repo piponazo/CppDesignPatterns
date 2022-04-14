@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+# Common build directories I normally use
+build*
+
+# QtCreator temporary files
+CMakeLists.txt.user
