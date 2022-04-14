@@ -32,7 +32,8 @@
 *.app
 
 # Common build directories I normally use
-build*
+buildDebug
+buildRelease
 
 # QtCreator temporary files
 CMakeLists.txt.user
