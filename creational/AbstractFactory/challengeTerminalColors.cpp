@@ -49,7 +49,6 @@ class Text {
   virtual void message(HANDLE hConsole) = 0;
 };
 
-// Derived Black Text class
 class BlackText : public Text {
  public:
   BlackText(HANDLE hConsole) {
@@ -63,7 +62,6 @@ class BlackText : public Text {
   }
 };
 
-// Derived White Text class
 class WhiteText : public Text {
  public:
   WhiteText(HANDLE hConsole) {
@@ -77,9 +75,31 @@ class WhiteText : public Text {
   }
 };
 
-// Derived Dark Green Text class
+class DarkGreenText : public Text {
+ public:
+  DarkGreenText(HANDLE hConsole) {
+    SetConsoleTextAttribute(hConsole, 242);
+    _theme = "dark";
+    cout << "Making the text green" << endl;
+  }
+  void message(HANDLE hConsole) {
+    SetConsoleTextAttribute(hConsole, 242);
+    cout << "This is the green font for the dark theme" << endl;
+  }
+};
 
-// Derived Light Green Text class
+class LightGreenText : public Text {
+ public:
+  LightGreenText(HANDLE hConsole) {
+    SetConsoleTextAttribute(hConsole, 10);
+    _theme = "dark";
+    cout << "Making the text green" << endl;
+  }
+  void message(HANDLE hConsole) {
+    SetConsoleTextAttribute(hConsole, 10);
+    cout << "This is the green font for the light theme" << endl;
+  }
+};
 
 #pragma endregion Text
 
@@ -89,6 +109,7 @@ class ThemeFactory {
  public:
   virtual std::unique_ptr<Background> setBackground(HANDLE hConsole) = 0;
   virtual std::unique_ptr<Text> getDefaultText(HANDLE hConsole) = 0;
+  virtual std::unique_ptr<Text> getGreenText(HANDLE hConsole) = 0;
 };
 
 // Derived Light Theme Factory which pairs the white background with darker text
@@ -100,6 +121,9 @@ class LightFactory : public ThemeFactory {
   std::unique_ptr<Text> getDefaultText(HANDLE hConsole) override {
     return std::make_unique<BlackText>(hConsole);
   }
+  std::unique_ptr<Text> getGreenText(HANDLE hConsole) override {
+    return std::make_unique<LightGreenText>(hConsole);
+  }
 };
 
 // Derived Dark Theme Factory which pairs the black background with lighter text
@@ -110,6 +134,9 @@ class DarkFactory : public ThemeFactory {
   }
   std::unique_ptr<Text> getDefaultText(HANDLE hConsole) override {
     return std::make_unique<WhiteText>(hConsole);
+  }
+  std::unique_ptr<Text> getGreenText(HANDLE hConsole) override {
+    return std::make_unique<DarkGreenText>(hConsole);
   }
 };
 #pragma endregion Factories
@@ -146,9 +173,11 @@ int main() {
   // Get the correct objects based on factory selected
   if (app) {
     auto appBkgd = app->setBackground(hConsole);
-    auto appDefaultText = app->getDefaultText(hConsole);
+    auto textDefault = app->getDefaultText(hConsole);
+    auto textGreen = app->getGreenText(hConsole);
 
-    appDefaultText->message(hConsole);
+    textDefault->message(hConsole);
+    textGreen->message(hConsole);
   }
 
   cout << endl;
