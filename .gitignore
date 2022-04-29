@@ -34,6 +34,10 @@
 # Common build directories I normally use
 buildDebug
 buildRelease
+build-*
 
 # QtCreator temporary files
 CMakeLists.txt.user
+
+# Visual Studio Code
+.vscode

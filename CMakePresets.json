@@ -1,0 +1,68 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "base_ninja",
+      "description": "Base preset to use ninja as generator",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-${presetName}",
+      "installDir": "${sourceDir}/build-${presetName}/install",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": true
+      }
+    },
+    {
+     "name": "msvc",
+     "displayName": "Visual Studio cl toolchain (also usable from VS Code)",
+     "inherits": "base_ninja",
+     "architecture": {
+       "value": "x64",
+       "strategy": "external"
+     },
+     "toolset": {
+       "value": "host=x64",
+       "strategy": "external"
+     },
+     "cacheVariables": {
+       "CMAKE_C_COMPILER": "cl.exe",
+       "CMAKE_CXX_COMPILER": "cl.exe",
+       "CMAKE_BUILD_TYPE": "Debug"
+     }
+    },
+    {
+      "name": "win-debug",
+      "displayName": "Windows Debug with configured architecture",
+      "description": "Sets Debug build type with the preloaded Visual Studio Environment",
+      "inherits": "base_ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "win-release",
+      "displayName": "Windows Release with configured architecture",
+      "description": "Sets Release build type with the preloaded Visual Studio Environment",
+      "inherits": "base_ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "linux-debug",
+      "displayName": "Linux Debug with default architecture",
+      "inherits": "base_ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Linux Release with default architecture",
+      "inherits": "base_ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ]
+}
