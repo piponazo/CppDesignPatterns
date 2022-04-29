@@ -8,5 +8,6 @@ project(CppDesignPatterns
 include(cmake/mainSetup.cmake)
 
 add_subdirectory(creational)
+add_subdirectory(behavioral)
 
 include(cmake/printSummary.cmake)
