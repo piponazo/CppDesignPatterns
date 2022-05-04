@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -14,52 +15,76 @@ class Canvas {
   void clearAll() {
     _shapes.clear();
   }
-  std::vector<std::string> getShapes() const {
+  const std::vector<std::string>& getShapes() const {
     return _shapes;
   }
 };
 
+class Command {
+ public:
+  virtual ~Command() {
+  }
+  virtual void execute() = 0;
+};
+
 class Button {
- public:
-  virtual ~Button() {
-  }
-  virtual void click() = 0;
-};
-
-class AddTriangleButton : public Button {
-  Canvas* _canvas;
+  std::unique_ptr<Command> _command;
 
  public:
-  AddTriangleButton(Canvas* canvas) : _canvas(canvas) {
+  Button(std::unique_ptr<Command> command) : _command(std::move(command)) {
   }
-  void click() override {
-    _canvas->addShape("triangle");
+  void click() {
+    _command->execute();
   }
 };
 
-// Note that each new AddXXXButton subclass has duplication of code (reference to canvas)
-class AddSquareButton : public Button {
+class AddShapeCommand : public Command {
+  std::string _shapeName;
   Canvas* _canvas;
 
  public:
-  AddSquareButton(Canvas* canvas) : _canvas(canvas) {
+  AddShapeCommand(const std::string& shapeName, Canvas* canvas) : _shapeName(shapeName), _canvas(canvas) {
   }
-  void click() override {
-    _canvas->addShape("square");
+  void execute() override {
+    _canvas->addShape(_shapeName);
   }
 };
 
-class AddClearButton : public Button {
+class ClearCommand : public Command {
   Canvas* _canvas;
 
  public:
-  AddClearButton(Canvas* canvas) : _canvas(canvas) {
+  ClearCommand(Canvas* canvas) : _canvas(canvas) {
   }
-  void click() override {
+  void execute() override {
     _canvas->clearAll();
   }
 };
 
 int main() {
+  auto canvas = std::make_unique<Canvas>();
+
+  auto addTriangleButton = std::make_unique<Button>(std::make_unique<AddShapeCommand>("triangle", canvas.get()));
+  auto addSquareButton = std::make_unique<Button>(std::make_unique<AddShapeCommand>("square", canvas.get()));
+  auto clearButton = std::make_unique<Button>(std::make_unique<ClearCommand>(canvas.get()));
+
+  auto printShapes = [](const std::vector<std::string>& shapes) {
+    cout << "Current canvas state:\n";
+    for (auto& shape : shapes) {
+      cout << "\tShape: " << shape << endl;
+    }
+  };
+
+  addTriangleButton->click();
+  printShapes(canvas->getShapes());
+
+  addSquareButton->click();
+  addSquareButton->click();
+  addTriangleButton->click();
+  printShapes(canvas->getShapes());
+
+  clearButton->click();
+  printShapes(canvas->getShapes());
+
   return EXIT_SUCCESS;
 }
