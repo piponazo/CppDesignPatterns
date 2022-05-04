@@ -106,7 +106,7 @@ class HistoryValidator : public BaseValidator {
 };
 
 int main() {
-  std::vector<std::string> oldPasswords = {"abc123", "123456", "hello"};
+  vector<string> oldPasswords = {"abc123", "123456", "hello"};
 
   auto emailValidator = std::make_unique<BaseValidator>();
 

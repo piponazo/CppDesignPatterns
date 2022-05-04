@@ -1,1 +1,2 @@
 add_subdirectory(ChainResponsibility)
+add_subdirectory(Command)
