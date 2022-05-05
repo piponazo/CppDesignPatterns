@@ -1,1 +1,0 @@
-add_executable(behavioral_command command.cpp)

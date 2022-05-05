@@ -1,2 +1,2 @@
-add_subdirectory(ChainResponsibility)
-add_subdirectory(Command)
+add_executable(behavioral_chain 	ChainResponsibility/chainResponsibility.cpp)
+add_executable(behavioral_command Command/command.cpp)
