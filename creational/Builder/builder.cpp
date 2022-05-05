@@ -1,4 +1,3 @@
-#include <format>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -93,7 +92,7 @@ class MealCombo {
     _drink = std::move(v);
   }
   std::string openMealBag() {
-    return std::format("\n {} meal combo: {} {} {}\n", _type, _entree->getEntree(), _side->getSide(), _drink->getDrink());
+    return _type + " meal combo: " + _entree->getEntree() + " " + _side->getSide() + " " + _drink->getDrink() + "\n";
   }
 };
 
