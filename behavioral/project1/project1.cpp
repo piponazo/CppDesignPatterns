@@ -1,4 +1,5 @@
 // This project combines the Observer & Chain of responsibility patters
+// In the 2nd iterator, we add the usage of the Command pattern
 
 #include <algorithm>
 #include <iostream>
@@ -57,13 +58,38 @@ class ChatUser : public Subscriber {
   }
 };
 
+class MessageCommand {
+ public:
+  virtual ~MessageCommand() {
+  }
+  virtual void execute() = 0;
+  virtual std::string getMessage() = 0;
+};
+
+class SendMessageCommand : public MessageCommand {
+  ChatGroup* _chatGroup;
+  std::string _message;
+
+ public:
+  SendMessageCommand(ChatGroup* group, std::string message) : _chatGroup(group), _message(message) {
+  }
+
+  // MessageCommand interface
+  void execute() override {
+    _chatGroup->publish(_message);
+  }
+  std::string getMessage() override {
+    return _message;
+  }
+};
+
 class Handler {
  public:
   virtual ~Handler() {
   }
 
   virtual Handler* setNext(Handler* nextValidator) = 0;
-  virtual std::string handle(ChatGroup* chat, std::string data) = 0;
+  virtual std::string handle(MessageCommand* command) = 0;
 };
 
 class BaseHandler : public Handler {
@@ -80,9 +106,9 @@ class BaseHandler : public Handler {
     return nextValidator;
   }
 
-  virtual std::string handle(ChatGroup* chat, std::string data) override {
+  virtual std::string handle(MessageCommand* command) override {
     if (_next) {
-      return _next->handle(chat, data);
+      return _next->handle(command);
     }
     return "Success";  // End of the chain
   }
@@ -93,12 +119,12 @@ class BaseHandler : public Handler {
 
 class NotEmptyValidator : public BaseHandler {
  public:
-  std::string handle(ChatGroup* chat, std::string data) override {
+  std::string handle(MessageCommand* command) override {
     puts("Checking if empty...");
-    if (data.empty()) {
+    if (command->getMessage().empty()) {
       return "Please enter a value";
     }
-    return BaseHandler::handle(chat, data);
+    return BaseHandler::handle(command);
   }
 };
 
@@ -108,19 +134,19 @@ class LengthValidator : public BaseHandler {
  public:
   LengthValidator(int minLength) : _minLength(minLength) {
   }
-  std::string handle(ChatGroup* chat, std::string data) override {
+  std::string handle(MessageCommand* command) override {
     puts("Checking string length ...");
-    if (data.size() < _minLength) {
+    if (command->getMessage().size() < _minLength) {
       return "Please enter a value longer than " + std::to_string(_minLength);
     }
-    return BaseHandler::handle(chat, data);
+    return BaseHandler::handle(command);
   }
 };
 
 class PostMessageHandler : public BaseHandler {
  public:
-  std::string handle(ChatGroup* group, std::string message) {
-    group->publish(message);
+  std::string handle(MessageCommand* command) {
+    command->execute();
     return "Message sent!";
   }
 };
@@ -143,12 +169,17 @@ int main() {
   Handler* sendMessageChain = new BaseHandler;
   sendMessageChain->setNext(new NotEmptyValidator)->setNext(new LengthValidator(2))->setNext(new PostMessageHandler);
 
-  std::cout << "Sending empty message:\n" << sendMessageChain->handle(&group1, "") << "\n\n";
-  std::cout << "Sending short message:\n" << sendMessageChain->handle(&group1, "H") << "\n\n";
+  SendMessageCommand emptyMessage(&group1, "");
+  SendMessageCommand tooShortMessage(&group1, "H");
+  SendMessageCommand helloGroup1(&group1, "Hello everyone in group 1!");
+  SendMessageCommand helloGroup2(&group2, "Hello everyone in group 2!");
+
+  std::cout << "Sending empty message:\n" << sendMessageChain->handle(&emptyMessage) << "\n\n";
+  std::cout << "Sending short message:\n" << sendMessageChain->handle(&tooShortMessage) << "\n\n";
   std::cout << "Sending message to group 1:\n"
-            << sendMessageChain->handle(&group1, "Hello everyone in group 1!") << "\n\n";
+            << sendMessageChain->handle(&helloGroup1) << "\n\n";
   std::cout << "Sending message to group 2:\n"
-            << sendMessageChain->handle(&group2, "Hello everyone in group 2!") << "\n\n";
+            << sendMessageChain->handle(&helloGroup2) << "\n\n";
 
   delete sendMessageChain;
 

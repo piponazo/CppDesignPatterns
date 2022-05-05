@@ -1,3 +1,5 @@
+// Command pattern turns a request into a standalone object that contains all information about the request.
+
 #include <iostream>
 #include <memory>
 #include <string>
