@@ -4,3 +4,5 @@ add_executable(behavioral_mediator_start 	Mediator/mediator_start.cpp)
 add_executable(behavioral_mediator_end 		Mediator/mediator_end.cpp)
 add_executable(behavioral_observer 		    Observer/observer.cpp)
 add_executable(behavioral_project1 		    project1/project1.cpp)
+
+add_executable(behavioral_interpreter 		Interpreter/interpreter.cpp)
