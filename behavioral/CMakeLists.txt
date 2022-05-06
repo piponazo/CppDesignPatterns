@@ -7,3 +7,4 @@ add_executable(behavioral_project1 		    project1/project1.cpp)
 
 add_executable(behavioral_interpreter 		Interpreter/interpreter.cpp)
 add_executable(behavioral_state 		      State/state.cpp)
+add_executable(behavioral_strategy 		    Strategy/strategy.cpp)
