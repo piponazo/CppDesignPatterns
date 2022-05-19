@@ -13,3 +13,4 @@ add_executable(behavioral_visitor           Visitor/visitor.cpp)
 
 add_executable(behavioral_iterator          Iterator/iterator.cpp)
 add_executable(behavioral_memento           Memento/memento.cpp)
+add_executable(behavioral_nullObject        NullObject/nullObject.cpp)
